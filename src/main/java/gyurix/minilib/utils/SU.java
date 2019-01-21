@@ -1,12 +1,9 @@
 package gyurix.minilib.utils;
 
-import gyurix.minilib.configfile.DefaultSerializers;
-import org.apache.commons.lang3.StringUtils;
-
 import java.awt.*;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.Random;
 
 /**
@@ -16,33 +13,18 @@ public class SU {
   public static final Charset utf8 = Charset.forName("UTF-8");
   public static Random rand = new Random();
 
-  /**
-   * Convert String to the given class
-   *
-   * @param str - Convertable String
-   * @param cl  - Target class
-   * @return The converted Object
-   */
-  public static Object convert(String str, Class cl) {
-    if (str == null || str.equals("null"))
-      return null;
-    cl = Primitives.wrap(cl);
-    try {
-      return Reflection.getConstructor(cl, String.class).newInstance(str);
-    } catch (Throwable e) {
+  public static void checkNull(Object... objects) {
+    String msg = null;
+    for (Object o : objects) {
+      if (msg == null) {
+        msg = String.valueOf(o);
+        continue;
+      }
+      if (o == null) {
+        throw new NullPointerException(msg + " can not be null!");
+      }
+      msg = null;
     }
-    try {
-      return Reflection.getMethod(cl, "valueOf", String.class).invoke(null, str);
-    } catch (Throwable e) {
-    }
-    try {
-      Method m = Reflection.getMethod(cl, "fromString", String.class);
-      return m.invoke(null, str);
-    } catch (Throwable e) {
-
-    }
-    System.err.println("Failed to convert \"" + str + "\" to class " + cl.getName());
-    return null;
   }
 
   /**
@@ -79,14 +61,6 @@ public class SU {
     return s;
   }
 
-  public static void init() {
-    VariableAPI.handlers.put("df", (args, eArgs) -> {
-      String s = StringUtils.join(args, "");
-      return new SimpleDateFormat(s).format(System.currentTimeMillis());
-    });
-    DefaultSerializers.init();
-  }
-
   /**
    * Generates a random number between min (inclusive) and max (exclusive)
    *
@@ -112,6 +86,66 @@ public class SU {
     float saturation = (float) rand(minSaturation, maxSaturation);
     float luminance = (float) rand(minLuminance, maxLuminance);
     return java.awt.Color.getHSBColor(hue, saturation, luminance);
+  }
+
+  /**
+   * Convert String to the given class
+   *
+   * @param str - Convertable String
+   * @param cl  - Target class
+   * @return The converted Object
+   */
+  public static Object convert(String str, Class cl) {
+    if (str == null || str.equals("null"))
+      return null;
+    cl = Primitives.wrap(cl);
+    try {
+      return Reflection.getConstructor(cl, String.class).newInstance(str);
+    } catch (Throwable ignored) {
+    }
+    try {
+      return Reflection.getMethod(cl, "valueOf", String.class).invoke(null, str);
+    } catch (Throwable ignored) {
+    }
+    try {
+      Method m = Reflection.getMethod(cl, "fromString", String.class);
+      return m.invoke(null, str);
+    } catch (Throwable ignored) {
+
+    }
+    System.err.println("Failed to convert \"" + str + "\" to class " + cl.getName());
+    return null;
+  }
+
+  public static void saveFiles(String... files) {
+    try {
+      for (String fn : files) {
+        checkNull("File name", fn);
+        File f = new File(fn);
+        if (f.exists())
+          return;
+        transloadStream(SU.class.getResourceAsStream("/" + fn), new FileOutputStream(f));
+      }
+    } catch (Throwable e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static byte[] streamToBytes(InputStream is) throws IOException {
+    byte[] buf = new byte[2048];
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    for (int i = is.read(buf, 0, 2048); i > 0; i = is.read(buf, 0, 2048))
+      bos.write(buf, 0, i);
+    is.close();
+    return bos.toByteArray();
+  }
+
+  public static void transloadStream(InputStream is, OutputStream os) throws IOException {
+    checkNull("InputStream", is, "OutputSteam", os);
+    byte[] buf = new byte[4096];
+    for (int done = is.read(buf); done > 0; done = is.read(buf))
+      os.write(buf, 0, done);
+    is.close();
   }
 
   /**
