@@ -15,10 +15,104 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+					<encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+	<plugin>
+  <groupId>org.sonatype.plugins</groupId>
+  <artifactId>nexus-staging-maven-plugin</artifactId>
+  <version>1.6.7</version>
+  <extensions>true</extensions>
+  <configuration>
+     <serverId>ossrh</serverId>
+     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+	 <encoding>UTF-8</encoding>
+  </configuration>
+</plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.2.1</version>
+	  <configuration>
+		<encoding>UTF-8</encoding>
+	  </configuration>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar-no-fork</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.9.1</version>
+	  <configuration>
+		<encoding>UTF-8</encoding>
+	  </configuration>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+	    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <version>1.5</version>
+	  	  <configuration>
+		<encoding>UTF-8</encoding>
+	  </configuration>
+      <executions>
+        <execution>
+          <id>sign-artifacts</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>sign</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
         </plugins>
     </build>
+
+    <name>MiniLib</name>
+    <description>A library for managing database connection, YAML configuration with some other useful methods.</description>
+    <url>https://github.com/gyurix/MiniLib</url>
+    <licenses>
+        <license>
+            <name>GPL-3 License</name>
+            <url>https://github.com/gyurix/MiniLib/blob/master/LICENSE.MD</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Baráth György</name>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/gyurix/MiniLib.git</connection>
+        <developerConnection>scm:git:ssh://github.com:gyurix/MiniLib.git</developerConnection>
+        <url>https://github.com/gyurix/MiniLib</url>
+    </scm>
+	
+	<distributionManagement>
+  <snapshotRepository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </snapshotRepository>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
+</distributionManagement>
+	
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>
