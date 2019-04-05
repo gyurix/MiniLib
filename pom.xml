@@ -6,7 +6,7 @@
 
     <groupId>gyurix</groupId>
     <artifactId>minilib</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <build>
         <plugins>
             <plugin>
@@ -88,8 +88,6 @@
         <developer>
             <name>Baráth György</name>
         </developer>
-    </developers>
-    <developers>
         <developer>
             <name>Nagy Zoltán</name>
         </developer>
@@ -125,6 +123,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.1-jre</version>
         </dependency>
     </dependencies>
 

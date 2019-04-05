@@ -68,6 +68,9 @@ public class DefaultSerializers {
     interfaceBasedClasses.put(Set.class, HashSet.class);
     interfaceBasedClasses.put(Map.class, HashMap.class);
   }
+  public static boolean shouldSkip(Class cl) {
+    return cl == Class.class || cl.getName().startsWith("java.lang.reflect.") || cl.getName().startsWith("sun.");
+  }
 
   public static class ArraySerializer implements Serializer {
     public Object fromData(ConfigData input, Class fixClass, Type... parameterTypes) {
